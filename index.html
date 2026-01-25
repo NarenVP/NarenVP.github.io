@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naren V P | Investment Professional</title>
+    <meta name="description" content="Naren V P - Investment Professional at Marcellus Investment Managers, Mumbai. Exploring the intersection of finance and artificial intelligence.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #111111;
+            --dark-gray: #333333;
+            --medium-gray: #666666;
+            --light-gray: #999999;
+            --border-gray: #e5e5e5;
+            --off-white: #fafafa;
+            --white: #ffffff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--black);
+            background-color: var(--white);
+            line-height: 1.7;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        a:hover {
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        nav {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a:hover {
+            color: var(--black);
+            opacity: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 48px;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 32px;
+            letter-spacing: -1px;
+        }
+
+        .hero .subtitle {
+            font-size: 18px;
+            color: var(--medium-gray);
+            margin-bottom: 40px;
+            max-width: 520px;
+        }
+
+        .hero .bio {
+            font-size: 17px;
+            color: var(--dark-gray);
+            line-height: 1.8;
+        }
+
+        .hero .bio p {
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            font-weight: 500;
+            color: var(--black);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 60px 0;
+            border-top: 1px solid var(--border-gray);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 28px;
+            font-weight: 400;
+            letter-spacing: -0.5px;
+        }
+
+        .section-link {
+            font-size: 14px;
+            color: var(--light-gray);
+            font-weight: 500;
+        }
+
+        /* Blog Posts */
+        .blog-list {
+            list-style: none;
+        }
+
+        .blog-item {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .blog-item:first-child {
+            padding-top: 0;
+        }
+
+        .blog-item:last-child {
+            border-bottom: none;
+        }
+
+        .blog-item a {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 20px;
+        }
+
+        .blog-title {
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--black);
+        }
+
+        .blog-date {
+            font-size: 14px;
+            color: var(--light-gray);
+            white-space: nowrap;
+        }
+
+        .blog-empty {
+            color: var(--light-gray);
+            font-style: italic;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        /* Contact Section */
+        .contact-content {
+            color: var(--dark-gray);
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        .contact-content p {
+            margin-bottom: 24px;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .contact-link {
+            font-weight: 500;
+            font-size: 15px;
+            padding-bottom: 2px;
+            border-bottom: 1px solid var(--black);
+        }
+
+        .contact-link:hover {
+            opacity: 0.6;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border-gray);
+            margin-top: 40px;
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: var(--light-gray);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            font-size: 14px;
+            color: var(--light-gray);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            nav {
+                padding: 24px 0;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .nav-links a {
+                font-size: 13px;
+                letter-spacing: 0.5px;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero .subtitle {
+                font-size: 16px;
+            }
+
+            .hero .bio {
+                font-size: 16px;
+            }
+
+            section {
+                padding: 48px 0;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .blog-item a {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .contact-links {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            footer .container {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="#" class="logo">Naren V P</a>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#blog">Blog</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main>
+        <section class="hero" id="home">
+            <div class="container">
+                <h1>Hello, I'm Naren.</h1>
+                <p class="subtitle">Investment professional based in Mumbai, exploring the intersection of finance and artificial intelligence.</p>
+                <div class="bio">
+                    <p>
+                        I work at <span class="highlight">Marcellus Investment Managers</span>, one of India's leading investment firms known for its focus on clean, well-governed companies with sustainable competitive advantages.
+                    </p>
+                    <p>
+                        My work involves presentations, data analysis, helping our team decode anything and such. I am always up for new challenges. Love learning and making things happen.
+                    </p>
+                    <p>
+                        Beyond finance, I'm deeply fascinated by <span class="highlight">artificial intelligence</span> and its potential to transform industries, including investment management. I spend my time exploring how AI can augment human decision-making and create new possibilities in research and analysis.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Section -->
+        <section id="blog">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Writing</h2>
+                </div>
+                <ul class="blog-list">
+                    <li class="blog-item">
+                        <a href="#">
+                            <span class="blog-title">Coming Soon: Thoughts on Investing and Technology</span>
+                            <span class="blog-date">2025</span>
+                        </a>
+                    </li>
+                    <!--
+                    Template for future blog posts:
+                    <li class="blog-item">
+                        <a href="blog/post-slug.html">
+                            <span class="blog-title">Your Blog Post Title</span>
+                            <span class="blog-date">Jan 2025</span>
+                        </a>
+                    </li>
+                    -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Get in Touch</h2>
+                </div>
+                <div class="contact-content">
+                    <p>
+                        I'm always interested in conversations about investing, technology, and the future of finance. Whether you want to discuss ideas, collaborate on something, or just say hello, feel free to reach out.
+                    </p>
+                    <div class="contact-links">
+                        <a href="mailto:naren@example.com" class="contact-link">Email</a>
+                        <a href="https://linkedin.com/in/" class="contact-link" target="_blank" rel="noopener">LinkedIn</a>
+                        <a href="https://twitter.com/" class="contact-link" target="_blank" rel="noopener">Twitter</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <span class="footer-text">&copy; 2025 Naren V P. All rights reserved.</span>
+            <div class="footer-links">
+                <a href="#home">Back to top</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
