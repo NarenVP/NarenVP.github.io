@@ -268,7 +268,8 @@
         <!-- Footer (Hidden initially) -->
         <footer class="reveal-hidden">
             <div class="container">
-                <span class="footer-text">&copy; 2026 Naren V P</span>
+                <span class="footer-text">&copy; 2026 Naren V P <span
+                        style="opacity: 0.5; font-size: 0.8em; margin-left: 10px;">v1.5</span></span>
                 <div class="footer-links">
                     <a href="#home">Back to top</a>
                 </div>
@@ -283,7 +284,9 @@
 
         <!-- Firebase & EmailJS Logic -->
         <script>
-            // TODO: REPLACE WITH YOUR KEYS
+            // v1.5 - Speed & Logic Update
+            console.log("Running Website Version 1.5");
+
             const firebaseConfig = {
                 apiKey: "AIzaSyAkkx7xOkQsCW_Uq7upZwfdGhNn-eYx2A4",
                 authDomain: "naren-website.firebaseapp.com",
@@ -349,10 +352,17 @@
                         btn.disabled = true;
                         statusDiv.style.display = 'block';
                         statusDiv.className = 'form-status';
-                        statusDiv.textContent = "Processing...";
+                        statusDiv.textContent = "Checking details...";
 
-                        const name = document.getElementById('name').value;
-                        const email = document.getElementById('email').value;
+                        // Helper: Title Case
+                        const toTitleCase = (str) => {
+                            return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+                        };
+
+                        // 1. Get & Format Data
+                        let rawName = document.getElementById('name').value;
+                        const name = toTitleCase(rawName); // Rule 1: Auto-Capitalize
+                        const email = document.getElementById('email').value.toLowerCase().trim();
                         const message = document.getElementById('message').value;
 
                         let firestoreSuccess = false;
@@ -360,28 +370,57 @@
                         let errors = [];
 
                         try {
-                            // 1. Save to Firestore
-                            if (firebase.apps.length) {
-                                btn.innerHTML = 'Saving...';
-                                await timeoutPromise(
-                                    firebase.firestore().collection('contacts').add({
-                                        name: name,
-                                        email: email,
-                                        message: message,
-                                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                                    }),
-                                    10000 // 10 second timeout
+                            if (!firebase.apps.length) throw new Error("Firebase not initialized.");
+                            const db = firebase.firestore();
+
+                            // STEP 1: Duplicate Check
+                            statusDiv.textContent = "Verifying email...";
+                            let duplicateQuery;
+                            try {
+                                duplicateQuery = await timeoutPromise(
+                                    db.collection('contacts').where('email', '==', email).get(),
+                                    5000
                                 );
-                                firestoreSuccess = true;
-                                console.log("Firestore saved.");
-                            } else {
-                                throw new Error("Firebase not initialized.");
+                            } catch (readError) {
+                                console.error("Read Error:", readError);
+                                throw new Error("Could not verify email. (Permission check failed?)");
                             }
+
+                            if (!duplicateQuery.empty) {
+                                throw new Error("You are already registered!");
+                            }
+
+                            // STEP 2: Save
+                            btn.innerHTML = 'Saving...';
+                            statusDiv.textContent = "Registering..."; // Update UI
+
+                            const docRef = await timeoutPromise(
+                                db.collection('contacts').add({
+                                    name: name,
+                                    email: email,
+                                    message: message,
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                }),
+                                10000
+                            );
+
+                            firestoreSuccess = true;
+                            console.log("Firestore saved. ID:", docRef.id);
+                            var savedId = docRef.id;
+
                         } catch (err) {
+                            if (err.message === "You are already registered!") {
+                                statusDiv.innerHTML = "⚠️ " + err.message;
+                                statusDiv.classList.add('error');
+                                btn.disabled = false;
+                                btn.innerHTML = originalBtnText;
+                                return;
+                            }
                             console.error("Firestore Error:", err);
-                            errors.push("Database Error: " + err.message);
-                            // Proceed to try email anyway? Yes.
+                            errors.push(err.message); // Clean error message
                         }
+
+                        // ... Proceed ...
 
                         try {
                             // 2. Send Email via EmailJS
@@ -414,12 +453,12 @@
 
                         // Final Status logic
                         if (firestoreSuccess && emailSuccess) {
-                            statusDiv.textContent = "Thanks! Message sent successfully.";
+                            statusDiv.textContent = "Thanks! Saved (Ref: " + (typeof savedId !== 'undefined' ? savedId : 'OK') + "). Email sent.";
                             statusDiv.classList.add('success');
                             form.reset();
                         } else if (firestoreSuccess || emailSuccess) {
                             // Partial success
-                            let msg = "Message received (Partial success). " + (firestoreSuccess ? "Saved to DB." : "Email sent.");
+                            let msg = "Message received (Partial success). " + (firestoreSuccess ? ("Saved (Ref: " + savedId + ").") : "Email sent.");
                             if (errors.length > 0) {
                                 msg += "<br><small style='color:#c62828'>Warning: " + errors.join(", ") + "</small>";
                             }
@@ -475,7 +514,7 @@
                 });
 
                 const text = "Naren V P";
-                const typeDelay = 100;
+                const typeDelay = 70; // 30% Faster (was 100)
                 const element = document.getElementById('typewriter');
                 const cursor = document.getElementById('cursor');
 
@@ -493,9 +532,9 @@
                 }
 
                 function finishTyping() {
-                    // Wait 1.0 Seconds (Reduced from 1.5s as requested)
+                    // Wait 400ms (Aggressively reduced from 1000ms to hit 3s total)
                     setTimeout(() => {
-                        // 1. Reveal Parents (make container visible so children can be seen)
+                        // 1. Reveal Parents
                         const splitTargets = document.querySelectorAll('.split-target');
                         splitTargets.forEach(t => t.style.opacity = '1');
 
@@ -504,29 +543,28 @@
                         words.forEach((word, index) => {
                             setTimeout(() => {
                                 word.classList.add('visible');
-                            }, index * 22); // Faster ripple (was 30ms)
+                            }, index * 15); // 30% Faster ripple (was 22ms)
                         });
 
-                        // 3. Animate Blocks (Social, Projects, Footer) - slight delay start
-                        // Wait until roughly half the words are done before starting blocks?
+                        // 3. Animate Blocks
                         const blocks = document.querySelectorAll('.reveal-hidden');
-                        let wordDelayOffset = words.length * 16; // Adjusted offset for faster words
+                        let wordDelayOffset = words.length * 12;
 
                         blocks.forEach((block, index) => {
                             setTimeout(() => {
                                 block.classList.add('reveal-visible');
                                 block.classList.remove('reveal-hidden');
-                            }, wordDelayOffset + (index * 110)); // Faster stagger (was 150ms)
+                            }, wordDelayOffset + (index * 80)); // 30% Faster stagger (was 110ms)
                         });
 
-                    }, 1000); // 1 Second initial delay
+                    }, 400);
 
                     setTimeout(() => {
                         cursor.style.display = 'none';
-                    }, 5000 + 1000);
+                    }, 5000);
                 }
 
-                setTimeout(type, 1000);
+                setTimeout(type, 500); // Start faster (was 1000)
             });
         </script>
 </body>
