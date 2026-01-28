@@ -295,8 +295,8 @@
             };
 
             const EMAILJS_PUBLIC_KEY = "jJrUccp2E4tf5OXVd";
-            const EMAILJS_SERVICE_ID = "service_n3yyn7k";
-            const EMAILJS_TEMPLATE_ID = "template_8mv3ced";
+            const EMAILJS_SERVICE_ID = "service_coy5m1s";
+            const EMAILJS_TEMPLATE_ID = "template_ldzz98p";
 
             // Initialize Firebase
             try {
@@ -320,6 +320,25 @@
                 const form = document.getElementById('contact-form');
                 const statusDiv = document.getElementById('form-status');
 
+                // Helper to prevent hanging forever
+                const timeoutPromise = (promise, ms) => {
+                    return new Promise((resolve, reject) => {
+                        const timeoutId = setTimeout(() => {
+                            reject(new Error("Operation timed out. Please check your internet connection."));
+                        }, ms);
+                        promise.then(
+                            (res) => {
+                                clearTimeout(timeoutId);
+                                resolve(res);
+                            },
+                            (err) => {
+                                clearTimeout(timeoutId);
+                                reject(err);
+                            }
+                        );
+                    });
+                };
+
                 if (form) {
                     form.addEventListener('submit', async (e) => {
                         e.preventDefault();
@@ -328,54 +347,100 @@
 
                         // Disable button
                         btn.disabled = true;
-                        btn.innerHTML = 'Sending...';
-                        statusDiv.style.display = 'none';
+                        statusDiv.style.display = 'block';
                         statusDiv.className = 'form-status';
+                        statusDiv.textContent = "Processing...";
 
                         const name = document.getElementById('name').value;
                         const email = document.getElementById('email').value;
                         const message = document.getElementById('message').value;
 
+                        let firestoreSuccess = false;
+                        let emailSuccess = false;
+                        let errors = [];
+
                         try {
                             // 1. Save to Firestore
                             if (firebase.apps.length) {
-                                await firebase.firestore().collection('contacts').add({
-                                    name: name,
-                                    email: email,
-                                    message: message,
-                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                                });
+                                btn.innerHTML = 'Saving...';
+                                await timeoutPromise(
+                                    firebase.firestore().collection('contacts').add({
+                                        name: name,
+                                        email: email,
+                                        message: message,
+                                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                    }),
+                                    10000 // 10 second timeout
+                                );
+                                firestoreSuccess = true;
+                                console.log("Firestore saved.");
                             } else {
-                                throw new Error("Firebase not initialized. Check keys.");
+                                throw new Error("Firebase not initialized.");
                             }
+                        } catch (err) {
+                            console.error("Firestore Error:", err);
+                            errors.push("Database Error: " + err.message);
+                            // Proceed to try email anyway? Yes.
+                        }
 
+                        try {
                             // 2. Send Email via EmailJS
-                            // Note: We send the parameters that match your EmailJS template variables
-                            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-                                from_name: name,
-                                from_email: email,
-                                message: message,
-                                reply_to: email
-                            });
+                            // Note: We map inputs to match your Template Variables (name, title, etc.)
+                            btn.innerHTML = 'Sending Email...';
+                            await timeoutPromise(
+                                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                                    // Standard fields
+                                    from_name: name,
+                                    from_email: email,
+                                    message: message,
+                                    reply_to: email,
 
-                            // Success
+                                    // Fields matching your specific Template screenshot
+                                    name: name,       // Matches {{name}}
+                                    title: message,   // Matches {{title}}
+                                    email: email,     // Commonly used for "To Email"
+                                    to_email: email   // Just in case
+                                }),
+                                10000 // 10 second timeout
+                            );
+                            emailSuccess = true;
+                            console.log("Email sent.");
+                        } catch (err) {
+                            console.error("EmailJS Error:", err);
+                            // EmailJS returns an object format { status: ..., text: ... } usually
+                            let errMsg = err.message || err.text || JSON.stringify(err);
+                            errors.push("Email Error: " + errMsg);
+                        }
+
+                        // Final Status logic
+                        if (firestoreSuccess && emailSuccess) {
                             statusDiv.textContent = "Thanks! Message sent successfully.";
                             statusDiv.classList.add('success');
                             form.reset();
-
-                        } catch (error) {
-                            console.error("Submission Error:", error);
-                            statusDiv.textContent = "Error: " + error.message;
+                        } else if (firestoreSuccess || emailSuccess) {
+                            // Partial success
+                            let msg = "Message received (Partial success). " + (firestoreSuccess ? "Saved to DB." : "Email sent.");
+                            if (errors.length > 0) {
+                                msg += "<br><small style='color:#c62828'>Warning: " + errors.join(", ") + "</small>";
+                            }
+                            statusDiv.innerHTML = msg;
+                            statusDiv.classList.add('success');
+                            form.reset();
+                        } else {
+                            // Total failure
+                            statusDiv.innerHTML = "Failed to send.<br>" + errors.join("<br>");
                             statusDiv.classList.add('error');
+                        }
 
-                            // Start auto-hide for error after 5s
+                        // Re-enable button
+                        btn.disabled = false;
+                        btn.innerHTML = originalBtnText;
+
+                        // Auto-hide if successful
+                        if (firestoreSuccess && emailSuccess) {
                             setTimeout(() => {
                                 statusDiv.style.display = 'none';
                             }, 5000);
-                        } finally {
-                            // Re-enable button
-                            btn.disabled = false;
-                            btn.innerHTML = originalBtnText;
                         }
                     });
                 }
@@ -385,6 +450,16 @@
         <!-- Typewriter Script -->
         <script>
             document.addEventListener('DOMContentLoaded', function () {
+                // Force scroll to top on refresh
+                if (history.scrollRestoration) {
+                    history.scrollRestoration = 'manual';
+                } else {
+                    window.onbeforeunload = function () {
+                        window.scrollTo(0, 0);
+                    }
+                }
+                window.scrollTo(0, 0);
+
                 // 1. Prepare Split Text for Animation
                 const splitTargets = document.querySelectorAll('.split-target');
                 splitTargets.forEach(target => {
@@ -418,7 +493,7 @@
                 }
 
                 function finishTyping() {
-                    // Wait 1.5 Seconds
+                    // Wait 1.0 Seconds (Reduced from 1.5s as requested)
                     setTimeout(() => {
                         // 1. Reveal Parents (make container visible so children can be seen)
                         const splitTargets = document.querySelectorAll('.split-target');
@@ -429,26 +504,26 @@
                         words.forEach((word, index) => {
                             setTimeout(() => {
                                 word.classList.add('visible');
-                            }, index * 30); // Fast ripple (30ms per word)
+                            }, index * 22); // Faster ripple (was 30ms)
                         });
 
                         // 3. Animate Blocks (Social, Projects, Footer) - slight delay start
                         // Wait until roughly half the words are done before starting blocks?
                         const blocks = document.querySelectorAll('.reveal-hidden');
-                        let wordDelayOffset = words.length * 20; // Time when words finish (approx)
+                        let wordDelayOffset = words.length * 16; // Adjusted offset for faster words
 
                         blocks.forEach((block, index) => {
                             setTimeout(() => {
                                 block.classList.add('reveal-visible');
                                 block.classList.remove('reveal-hidden');
-                            }, wordDelayOffset + (index * 150));
+                            }, wordDelayOffset + (index * 110)); // Faster stagger (was 150ms)
                         });
 
-                    }, 1500);
+                    }, 1000); // 1 Second initial delay
 
                     setTimeout(() => {
                         cursor.style.display = 'none';
-                    }, 5000 + 1500);
+                    }, 5000 + 1000);
                 }
 
                 setTimeout(type, 1000);
