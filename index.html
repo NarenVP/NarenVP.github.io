@@ -126,7 +126,7 @@
             </div>
         </section>
 
-        <!-- Projects Section (Staggered Block) -->
+        <!-- Projects Section (Staggered Block) - HIDDEN
         <section id="projects" class="reveal-hidden">
             <div class="container">
                 <div class="section-header">
@@ -134,7 +134,6 @@
                     <h2 class="section-title">Projects</h2>
                 </div>
                 <div class="projects-grid">
-                    <!-- Placeholder Project 1 -->
                     <a href="#" class="project-card">
                         <div class="project-header">
                             <h3 class="project-title">Financial Data Analysis</h3>
@@ -151,7 +150,6 @@
                         </div>
                     </a>
 
-                    <!-- Placeholder Project 2 -->
                     <a href="#" class="project-card">
                         <div class="project-header">
                             <h3 class="project-title">AI Research Tool</h3>
@@ -171,6 +169,7 @@
                 </div>
             </div>
         </section>
+        -->
 
         <!-- Blog Section (Staggered Block) -->
         <section id="blog" class="reveal-hidden">
@@ -467,12 +466,12 @@
 
                         // Final Status logic
                         if (firestoreSuccess && emailSuccess) {
-                            statusDiv.textContent = "Thanks! Saved (Ref: " + (typeof savedId !== 'undefined' ? savedId : 'OK') + "). Email sent.";
+                            statusDiv.textContent = "Thank you for reaching out! Please allow me some time to get back to you.";
                             statusDiv.classList.add('success');
                             form.reset();
                         } else if (firestoreSuccess || emailSuccess) {
                             // Partial success
-                            let msg = "Message received (Partial success). " + (firestoreSuccess ? ("Saved (Ref: " + savedId + ").") : "Email sent.");
+                            let msg = "Message received (Partial success). " + (firestoreSuccess ? "Saved." : "Email sent.");
                             if (errors.length > 0) {
                                 msg += "<br><small style='color:#c62828'>Warning: " + errors.join(", ") + "</small>";
                             }
