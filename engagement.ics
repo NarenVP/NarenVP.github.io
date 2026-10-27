@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Naren and Sahana//Engagement//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:naren-sahana-engagement-20261129@narenvp.github.io
+DTSTAMP:20261027T143000Z
+DTSTART:20261129T043000Z
+DTEND:20261129T083000Z
+SUMMARY:Naren & Sahana Engagement
+LOCATION:Shri Jayamaruthi Temple\, 15th Main\, 3rd Stage\, Teacher's Colony\, Basaveshwar Nagar\, Bengaluru\, Karnataka 560079
+DESCRIPTION:Directions: https://maps.app.goo.gl/UwmA6RsN7xa1ELX17
+END:VEVENT
+END:VCALENDAR
