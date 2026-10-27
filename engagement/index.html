@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Save the date · Naren &amp; Sahana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap">
+<style>
+  :root { --cream:#F8F3EA; --gold:#A6823C; --ink:#2E2A24; --soft:#5A5246; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--cream); color: var(--ink); }
+  body { font-family: 'Cormorant Garamond', Georgia, serif; font-variant-numeric: lining-nums; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+  .card { width: 100%; max-width: 440px; border: 1px solid var(--gold); outline: 1px solid var(--gold); outline-offset: -8px; padding: 44px 28px 40px; text-align: center; }
+  .lotus { display: block; margin: 0 auto; }
+  h1 { margin: 18px 0 0; font-size: 40px; font-weight: 500; font-style: italic; color: var(--gold); line-height: 1.1; }
+  .rule { width: 48px; height: 1px; background: var(--gold); margin: 22px auto; }
+  .when { font-size: 22px; line-height: 1.35; }
+  .where { margin-top: 10px; font-size: 20px; font-weight: 600; }
+  .area { margin-top: 2px; font-size: 18px; color: var(--soft); }
+  .status { margin-top: 26px; font-size: 18px; font-style: italic; color: var(--soft); min-height: 24px; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 15px 18px; border-radius: 2px; font-family: inherit; font-size: 19px; font-weight: 600; letter-spacing: 1px; text-decoration: none; text-align: center; }
+  .primary { background: var(--gold); color: #FFFDF8; }
+  .secondary { border: 1px solid var(--gold); color: #6B5426; }
+  .note { margin-top: 18px; font-size: 15px; color: var(--soft); line-height: 1.4; }
+</style>
+</head>
+<body>
+<main class="card">
+  <svg class="lotus" width="78" height="52" viewBox="180 38 80 54" fill="none" stroke="#A6823C" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M218 87 C204 86 190 78 184 66 C198 66 211 74 218 87 Z M222 87 C236 86 250 78 256 66 C242 66 229 74 222 87 Z" fill="#A6823C" fill-opacity="0.15"></path>
+    <path d="M220 86 C208 80 200 66 202 54 C212 60 219 72 220 86 Z M220 86 C232 80 240 66 238 54 C228 60 221 72 220 86 Z" fill="#A6823C" fill-opacity="0.4"></path>
+    <path d="M220 44 C231 57 231 75 220 86 C209 75 209 57 220 44 Z" fill="#A6823C"></path>
+    <path d="M194 88 Q220 92 246 88"></path>
+  </svg>
+  <h1>Naren &amp; Sahana</h1>
+  <div class="rule"></div>
+  <div class="when">Sunday, 29th November 2026<br>10 a.m. to 2 p.m.</div>
+  <div class="where">Shri Jayamaruthi Temple</div>
+  <div class="area">Basaveshwara Nagar, Bangalore</div>
+
+  <div class="status" id="status">Choose your calendar</div>
+  <a class="btn primary" id="google" href="#">Add to Google Calendar</a>
+  <a class="btn secondary" id="apple" href="/engagement.ics">Apple / other calendar</a>
+  <p class="note" id="note"></p>
+</main>
+<script>
+  var googleUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+    + '&text=' + encodeURIComponent('Naren & Sahana Engagement')
+    + '&dates=20261129T043000Z/20261129T083000Z'
+    + '&location=' + encodeURIComponent("Shri Jayamaruthi Temple, 15th Main, 3rd Stage, Teacher's Colony, Basaveshwar Nagar, Bengaluru, Karnataka 560079")
+    + '&details=' + encodeURIComponent('Directions: https://maps.app.goo.gl/UwmA6RsN7xa1ELX17');
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/.test(ua);
+  var google = document.getElementById('google');
+  var statusEl = document.getElementById('status');
+  var note = document.getElementById('note');
+
+  if (isAndroid) {
+    // Open Google's own pre-filled form in Chrome, so the Calendar app cannot intercept the link and drop the details.
+    var path = googleUrl.replace(/^https:\/\//, '');
+    google.href = 'intent://' + path + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(googleUrl) + ';end';
+    statusEl.textContent = 'Opening Google Calendar…';
+    note.textContent = 'Tap Save on the next screen to add it to your calendar.';
+    // A redirect without a tap stays in the browser, which is what we want here.
+    setTimeout(function () { window.location.replace(googleUrl); }, 400);
+  } else if (isIOS) {
+    google.href = googleUrl;
+    google.target = '_blank';
+    statusEl.textContent = 'Opening your calendar…';
+    note.textContent = 'Tap Add on the next screen to save it.';
+    setTimeout(function () { window.location.href = '/engagement.ics'; }, 400);
+  } else {
+    google.href = googleUrl;
+    google.target = '_blank';
+  }
+</script>
+</body>
+</html>
